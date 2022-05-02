@@ -1,0 +1,39 @@
+import Grafos.*;
+import Ferramentas.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+
+public class Program {
+
+    public static void main(String[] args) {
+
+//        InOut leitorDeInput = new InOut();
+//        GrafoLista grafo = new GrafoLista();
+//        GrafoMatriz grafo2 = new GrafoMatriz();
+//
+//        Map<Vertice, List<Vertice>> adjList = leitorDeInput.readGrafo();
+//        grafo.readAdjList(adjList);
+//        grafo2.readAdjList(adjList);
+//
+//        grafo.printGraph();
+//        System.out.println();
+//        grafo2.printGraph();
+
+        InOut leitorDeInput = new InOut();
+        GrafoLista grafo = new GrafoLista();
+
+        Map<Vertice, List<Vertice>> adjList = leitorDeInput.readGrafo();
+        grafo.readAdjList(adjList);
+
+        List<Vertice> lista = grafo.DFS();
+
+        for (Vertice vertice : lista) {
+           System.out.println(vertice.getLabel());
+        }
+
+
+    }
+
+}

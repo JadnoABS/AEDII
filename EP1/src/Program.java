@@ -22,16 +22,23 @@ public class Program {
 //        grafo2.printGraph();
 
         InOut leitorDeInput = new InOut();
-        GrafoLista grafo = new GrafoLista();
 
-        Map<Vertice, List<Vertice>> adjList = leitorDeInput.readGrafo();
-        grafo.readAdjList(adjList);
+        GrafoMatriz graph = new GrafoMatriz();
+        graph.readAdjList(leitorDeInput.readGrafo());
 
-        List<Vertice> lista = grafo.DFS();
+        graph.printGraph();
+        System.out.println();
+        graph.getTranspose().printGraph();
 
-        for (Vertice vertice : lista) {
-           System.out.println(vertice.getLabel());
-        }
+
+//        GrafoLista grafo = new GrafoLista();
+//
+//        Map<Vertice, List<Vertice>> adjList = leitorDeInput.readGrafo();
+//        grafo.readAdjList(adjList);
+//
+//        Grafo SCG = grafo.Kosaraju();
+//
+//        SCG.printGraph();
 
 
     }

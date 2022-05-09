@@ -15,9 +15,31 @@ public class GrafoMatriz implements Grafo{
         return adjMatrix;
     }
 
+    public GrafoMatriz(){
+    }
+
+    public GrafoMatriz(List<List<Boolean>> matrix) {
+        this.adjMatrix = matrix;
+    }
+
     @Override
-    public Grafo getTranspose() {
-        return null;
+    public GrafoMatriz getTranspose() {
+
+        List<List<Boolean>> transposedMatrix = new ArrayList<>(Collections.nCopies(adjMatrix.size(), null));
+        if(this.adjMatrix.isEmpty()) return null;
+
+        for (int i = 0; i < adjMatrix.size(); i++) {
+            transposedMatrix.add(i, new ArrayList<>(Collections.nCopies(adjMatrix.size(), false)));
+            for (int j = 0; j < adjMatrix.get(i).size(); j++) {
+                if(adjMatrix.get(i).get(j)){
+                    List<Boolean> list = new ArrayList<>(Collections.nCopies(adjMatrix.size(), false));
+                    list.add(i, true);
+                    transposedMatrix.add(j, list);
+                }
+            }
+        }
+
+        return new GrafoMatriz(transposedMatrix);
     }
 
     @Override

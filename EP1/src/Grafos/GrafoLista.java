@@ -4,15 +4,14 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class GrafoLista implements Grafo{
 
     private Map<Vertice, List<Vertice>> adjVertices;
     private int time;
     private List<Vertice> vertexesOutOrder;
-    private Map<List<Vertice>, List<List<Vertice>>> stronglyConnectedAdjList;
     private String nextVertexLabel = "";
+    private Map<Componente, List<Componente>> stronglyConnectedComponents;
 
     public Map<Vertice, List<Vertice>> getAdjVertices() {
         return this.adjVertices;
@@ -22,35 +21,26 @@ public class GrafoLista implements Grafo{
         this.vertexesOutOrder = outOrderList;
     }
 
+    public Map<Vertice, List<Vertice>> getSCAL() {
+        Map<Vertice, List<Vertice>> SCAL = new HashMap<>();
+
+        for (Map.Entry<Componente, List<Componente>> entry : stronglyConnectedComponents.entrySet()) {
+            List<Vertice> list = new ArrayList<>();
+            for (Componente comp : entry.getValue()) {
+               list.add(comp.toVertice());
+            }
+            SCAL.put(entry.getKey().toVertice(), list);
+        }
+
+        return SCAL;
+    }
+    
     public Grafo Kosaraju() {
-        this.stronglyConnectedAdjList = new HashMap<>();
         GrafoLista transposed = getTranspose();
         transposed.setVertexesOutOrder(this.DFS());
         transposed.DFS();
-        Map<List<Vertice>, List<List<Vertice>>> SCAL = transposed.getStronglyConnectedAdjList();
 
-
-        Map<Vertice, List<Vertice>> adjListSCG = new HashMap<>();
-
-        for (Map.Entry<List<Vertice>, List<List<Vertice>>> entry : SCAL.entrySet()) {
-            String label = new String();
-            for (Vertice v : entry.getKey()) {
-                label += v.getLabel();
-            }
-            Vertice key = new Vertice(label);
-            List<Vertice> value = new ArrayList<>();
-
-            for (List<Vertice> verticeList : entry.getValue()) {
-                label = "";
-                for (Vertice v : verticeList) {
-                    label += v.getLabel();
-                }
-                Vertice adj = new Vertice(label);
-                value.add(adj);
-            }
-
-            adjListSCG.put(key, value);
-        }
+        Map<Vertice, List<Vertice>> adjListSCG = transposed.getSCAL();
 
         Grafo stronglyConnectedGraph = new GrafoLista();
         stronglyConnectedGraph.readAdjList(adjListSCG);
@@ -76,27 +66,27 @@ public class GrafoLista implements Grafo{
                }
            });
        } else {
-           this.stronglyConnectedAdjList = new HashMap<>();
+           this.stronglyConnectedComponents = new HashMap<>();
            for (int i = this.vertexesOutOrder.size() - 1; i >= 0; i--) {
                Vertice k = this.vertexesOutOrder.get(i);
                if(k.getColor().equals('w')){
                    DFSVisit(k,false, true);
-                   componentsADJ();
                }
            }
+           componentsADJ();
        }
 
         return vertexesOutOrder;
     }
 
     private void DFSVisit(Vertice v, boolean addToList, boolean isComponentStart) {
-        List<Vertice> component = isComponentStart ? new ArrayList<>() : null;
+        Componente component = isComponentStart ? new Componente() : null;
         if(!addToList && isComponentStart) {
             component.add(v);
-            this.stronglyConnectedAdjList.put(component, new ArrayList<>());
+            this.stronglyConnectedComponents.put(component, new ArrayList<>());
         }
         if(!addToList && !isComponentStart) {
-            for(Map.Entry<List<Vertice>, List<List<Vertice>>> entry : this.stronglyConnectedAdjList.entrySet()){
+            for(Map.Entry<Componente, List<Componente>> entry : this.stronglyConnectedComponents.entrySet()){
                 if(entry.getKey().contains(v.getPI())){
                     component = entry.getKey();
                     component.add(v);
@@ -122,22 +112,20 @@ public class GrafoLista implements Grafo{
     }
 
     private void componentsADJ() {
-        for (Map.Entry<List<Vertice>, List<List<Vertice>>> entry : this.stronglyConnectedAdjList.entrySet()) {
-            entry.getKey().forEach(v -> {
-                this.adjVertices.get(v).forEach( k -> {
-                    if(!entry.getKey().contains(k)) {
-                        List<Vertice> comp;
-                        for (List<Vertice> x : this.stronglyConnectedAdjList.keySet()) {
-                            if(x.contains(k)){
-                                comp = x;
-                                if(!entry.getValue().contains(comp))
-                                    entry.getValue().add(comp);
+        for (Map.Entry<Componente, List<Componente>> component : this.stronglyConnectedComponents.entrySet()) {
+            for (Vertice vertice : component.getKey().getComponentList()) {
+                for (Vertice adj : this.adjVertices.get(vertice)) {
+                    if(!component.getKey().contains(adj)){
+                        for (Componente c : this.stronglyConnectedComponents.keySet()) {
+                            if(c.equals(component.getKey())) continue;
+                            if(c.contains(adj) && !component.getValue().contains(c)){
+                                component.getValue().add(c);
                                 break;
                             }
                         }
                     }
-                });
-            });
+                }
+            }
         }
     }
 
@@ -199,9 +187,5 @@ public class GrafoLista implements Grafo{
             });
             System.out.printf("\n");
         }
-    }
-
-    public Map<List<Vertice>, List<List<Vertice>>> getStronglyConnectedAdjList() {
-        return stronglyConnectedAdjList;
     }
 }

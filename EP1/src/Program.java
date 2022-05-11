@@ -29,6 +29,9 @@ public class Program {
         graph.printGraph();
         System.out.println();
         graph.getTranspose().printGraph();
+        System.out.println();
+        Grafo SCG = graph.Kosaraju();
+        SCG.printGraph();
 
 
 //        GrafoLista grafo = new GrafoLista();
@@ -39,8 +42,6 @@ public class Program {
 //        Grafo SCG = grafo.Kosaraju();
 //
 //        SCG.printGraph();
-
-
     }
 
 }

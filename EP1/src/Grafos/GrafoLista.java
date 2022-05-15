@@ -13,6 +13,11 @@ public class GrafoLista implements Grafo{
     private String nextVertexLabel = "";
     private Map<Componente, List<Componente>> stronglyConnectedComponents;
 
+    public GrafoLista() {}
+    public GrafoLista(Map<Vertice, List<Vertice>> map) {
+        this.readAdjList(map);
+    }
+
     public Map<Vertice, List<Vertice>> getAdjVertices() {
         return this.adjVertices;
     }
@@ -34,17 +39,26 @@ public class GrafoLista implements Grafo{
 
         return SCAL;
     }
-    
-    public Grafo Kosaraju() {
+
+    public List<Vertice> topologicalSort() {
+        List<Vertice> vertexOrder = DFS();
+        List<Vertice> vertexTopOrder = new ArrayList<>();
+        for (int i = vertexOrder.size()-1; i >= 0; i--) {
+            vertexTopOrder.add(vertexOrder.get(i));
+        }
+
+        return vertexTopOrder;
+    }
+
+    public GrafoLista Kosaraju() {
         GrafoLista transposed = getTranspose();
         transposed.setVertexesOutOrder(this.DFS());
         transposed.DFS();
 
         Map<Vertice, List<Vertice>> adjListSCG = transposed.getSCAL();
 
-        Grafo stronglyConnectedGraph = new GrafoLista();
+        GrafoLista stronglyConnectedGraph = new GrafoLista();
         stronglyConnectedGraph.readAdjList(adjListSCG);
-        stronglyConnectedGraph.printGraph();
 
         return stronglyConnectedGraph.getTranspose();
     }
@@ -53,18 +67,18 @@ public class GrafoLista implements Grafo{
         if(!(this.vertexesOutOrder instanceof ArrayList)){
             this.vertexesOutOrder = new ArrayList<Vertice>();
         }
-        adjVertices.keySet().forEach(k -> {
+        for (Vertice k : adjVertices.keySet()) {
             k.setColor('w');
             k.setPI(null);
-        });
+        }
         this.time = 0;
 
        if(this.vertexesOutOrder.isEmpty()) {
-           adjVertices.keySet().forEach(k -> {
+           for (Vertice k : adjVertices.keySet()) {
                if(k.getColor().equals('w')){
                    DFSVisit(k, true, false);
                }
-           });
+           }
        } else {
            this.stronglyConnectedComponents = new HashMap<>();
            for (int i = this.vertexesOutOrder.size() - 1; i >= 0; i--) {
@@ -98,6 +112,14 @@ public class GrafoLista implements Grafo{
         v.setIn(this.time);
         v.setColor('g');
         for (Vertice adj : adjVertices.get(v)) {
+            if(adj.getColor() == null){
+                for (Vertice vertice : this.adjVertices.keySet()) {
+                   if(vertice.getLabel().equals(adj.getLabel())) {
+                       adj = vertice;
+                       break;
+                   }
+                }
+            };
             if(adj.getColor().equals('w')) {
                 adj.setPI(v);
                 DFSVisit(adj, addToList, false);

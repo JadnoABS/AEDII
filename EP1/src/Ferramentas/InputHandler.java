@@ -6,12 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
-import Grafos.GrafoLista;
-import Grafos.GrafoMatriz;
 import Grafos.Vertice;
 
-public class InOut{
+public class InputHandler{
 
+    public boolean isListGraph;
     public Map<Vertice, List<Vertice>> readGrafo() {
         Scanner input = new Scanner(System.in);
         Map<Vertice, List<Vertice>> adjList = new HashMap<Vertice, List<Vertice>>();
@@ -58,6 +57,8 @@ public class InOut{
             });
             adjList.put(entry.getKey(), verticeList);
         }
+
+        this.isListGraph = input.nextLine().equals("1") ? true : false;
 
         return adjList;
     }

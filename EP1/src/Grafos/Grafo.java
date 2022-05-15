@@ -7,4 +7,7 @@ public interface Grafo {
     Grafo getTranspose();
     void readAdjList(Map<Vertice, List<Vertice>> adjList);
     void printGraph();
+    List<Vertice> topologicalSort();
+    List DFS();
+    Grafo Kosaraju();
 }

@@ -3,45 +3,59 @@ import Ferramentas.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 public class Program {
 
     public static void main(String[] args) {
 
-//        InOut leitorDeInput = new InOut();
-//        GrafoLista grafo = new GrafoLista();
-//        GrafoMatriz grafo2 = new GrafoMatriz();
-//
-//        Map<Vertice, List<Vertice>> adjList = leitorDeInput.readGrafo();
-//        grafo.readAdjList(adjList);
-//        grafo2.readAdjList(adjList);
-//
-//        grafo.printGraph();
-//        System.out.println();
-//        grafo2.printGraph();
-
-        InOut leitorDeInput = new InOut();
-
-        GrafoMatriz graph = new GrafoMatriz();
-        graph.readAdjList(leitorDeInput.readGrafo());
-
-        graph.printGraph();
-        System.out.println();
-        graph.getTranspose().printGraph();
-        System.out.println();
-        Grafo SCG = graph.Kosaraju();
-        SCG.printGraph();
+        InputHandler leitorDeInput = new InputHandler();
+        Map<Vertice, List<Vertice>> adjList = leitorDeInput.readGrafo();
 
 
-//        GrafoLista grafo = new GrafoLista();
-//
-//        Map<Vertice, List<Vertice>> adjList = leitorDeInput.readGrafo();
-//        grafo.readAdjList(adjList);
-//
-//        Grafo SCG = grafo.Kosaraju();
-//
-//        SCG.printGraph();
+        if(leitorDeInput.isListGraph) {
+
+            GrafoLista grafo = new GrafoLista(adjList);
+
+            GrafoLista stronglyConnectedGraph = grafo.Kosaraju();
+
+            List<Vertice> sortedVertexes = stronglyConnectedGraph.topologicalSort();
+
+            if(sortedVertexes.size() == 1)
+                System.out.println("Sim");
+            else
+                System.out.println("Não");
+
+            System.out.println(sortedVertexes.size());
+
+            for (Vertice v : sortedVertexes) {
+               System.out.print(v.getLabel() + " ");
+            }
+            System.out.println();
+
+            stronglyConnectedGraph.printGraph();
+        } else {
+
+            GrafoMatriz grafo = new GrafoMatriz(adjList);
+
+            GrafoMatriz stronglyConnectedGraph = grafo.Kosaraju();
+
+            List<Vertice> sortedVertexes = stronglyConnectedGraph.topologicalSort();
+
+            if(sortedVertexes.size() == 1)
+                System.out.println("Sim");
+            else
+                System.out.println("Não");
+
+            System.out.println(sortedVertexes.size());
+
+            for (Vertice v : sortedVertexes) {
+                System.out.print(v.getLabel() + " ");
+            }
+            System.out.println();
+
+            stronglyConnectedGraph.printGraph();
+        }
+
     }
 
 }

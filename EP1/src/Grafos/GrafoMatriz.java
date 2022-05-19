@@ -21,16 +21,10 @@ public class GrafoMatriz implements Grafo{
    public GrafoMatriz(Map<Vertice, List<Vertice>> map) {
        this.readAdjList(map);
    }
-    public List<List<Boolean>> getAdjMatrix() {
-        return adjMatrix;
-    }
 
     public void setVertexesOutOrder(List<Integer> vertexesOutOrder) {
         this.vertexesOutOrder = vertexesOutOrder;
     }
-
-    public List<List<Boolean>> getComponentAdjMatrix() { return this.componentAdjMatrix; }
-
 
     public List<Vertice> topologicalSort() {
        List<Integer> indexList = DFS();
@@ -52,7 +46,7 @@ public class GrafoMatriz implements Grafo{
        transpose.DFS();
 
        GrafoMatriz stronglyConnectedGraph = new GrafoMatriz();
-       stronglyConnectedGraph.readAdjList(transpose.componentsToMap());
+       stronglyConnectedGraph.readAdjList(transpose.componentsToVertexMap());
 
        return stronglyConnectedGraph.getTranspose();
     }
@@ -130,25 +124,7 @@ public class GrafoMatriz implements Grafo{
            this.vertexesOutOrder.add(index);
    }
 
-    public Map<Vertice, List<Vertice>> vertexesToMap() {
-        Map<Vertice, List<Vertice>> componentMap = new HashMap<>();
-
-        for (Map.Entry<Integer, Vertice> entry : this.vertexIndexes.entrySet()) {
-            int index = entry.getKey();
-            Vertice comp = entry.getValue();
-
-            List<Vertice> adjList = new ArrayList<>();
-
-            for (int i = 0; i < this.adjMatrix.get(index).size(); i++) {
-                if(this.adjMatrix.get(index).get(i)){
-                    adjList.add(vertexIndexes.get(i));
-                }
-            }
-            componentMap.put(comp, adjList);
-        }
-        return componentMap;
-    }
-   public Map<Vertice, List<Vertice>> componentsToMap() {
+   public Map<Vertice, List<Vertice>> componentsToVertexMap() {
         Map<Vertice, List<Vertice>> componentMap = new HashMap<>();
 
        for (Map.Entry<Integer, Componente> entry : this.componentIndexes.entrySet()) {
@@ -167,7 +143,45 @@ public class GrafoMatriz implements Grafo{
        return componentMap;
    }
 
+   public Map<Componente, List<Componente>> componentsToMap() {
+       Map<Componente, List<Componente>> componentMap = new HashMap<>();
 
+       for (Map.Entry<Integer, Componente> entry : this.componentIndexes.entrySet()) {
+           int index = entry.getKey();
+           Componente comp = entry.getValue();
+
+           List<Componente> adjList = new ArrayList<>();
+
+           for (int i = 0; i < this.componentAdjMatrix.get(index).size(); i++) {
+               if(this.componentAdjMatrix.get(index).get(i)){
+                   adjList.add(componentIndexes.get(i));
+               }
+           }
+           componentMap.put(comp, adjList);
+       }
+       return componentMap;
+   }
+
+    public Map<Vertice, List<Vertice>> vertexMap() {
+        Map<Vertice, List<Vertice>> vertexMap= new HashMap<>();
+
+        for (Map.Entry<Integer, Vertice> entry : this.vertexIndexes.entrySet()) {
+            int index = entry.getKey();
+            Vertice v = entry.getValue();
+
+            List<Vertice> adjList = new ArrayList<>();
+
+            for (int i = 0; i < this.adjMatrix.get(index).size(); i++) {
+                if(this.adjMatrix.get(index).get(i)){
+                    adjList.add(vertexIndexes.get(i));
+                }
+            }
+            vertexMap.put(v, adjList);
+        }
+        return vertexMap;
+    }
+
+   // Adiciona os componentes adjascentes na matrix dos componentes (componentAdjMatrix)
    private void componentsADJ() {
        for (Map.Entry<Integer, Vertice> e : this.vertexIndexes.entrySet()) {
            Vertice vertex = e.getValue();
@@ -283,56 +297,4 @@ public class GrafoMatriz implements Grafo{
         }
         System.out.printf("\n");
     }
-
-//    public void printCAL() {
-//        // int columnSize = this.vertexIndexes.get(0).getLabel().length();
-//        System.out.printf("    ");
-//        for(Map.Entry<Integer, Componente> entry : this.componentIndexes.entrySet()) {
-//            System.out.printf("%s  ", entry.getValue().toVertice().getLabel());
-//        }
-//        System.out.printf("\n");
-//
-//        for(Map.Entry<Integer, Componente> entry : this.componentIndexes.entrySet()) {
-//            System.out.printf("%s  ", entry.getValue().toVertice().getLabel());
-//            this.componentAdjMatrix.get(entry.getKey()).forEach(v -> {
-//                if(v) System.out.print("1  ");
-//                else System.out.print("0  ");
-//            });
-//            System.out.printf("\n");
-//        }
-//        System.out.printf("\n");
-//    }
-//   public void printComponentsMatrix() {
-//       for (List<Boolean> list : this.componentAdjMatrix) {
-//           for (int i = 0; i < list.size(); i++) {
-//              System.out.print(list.get(i) + " ");
-//           }
-//           System.out.println();
-//       }
-//   }
-//    public Map<Integer, Vertice> getSCIndexes() {
-//        Map<Integer, Vertice> SCI = new HashMap<>();
-//        for (Map.Entry<Integer, Componente> entry : this.componentIndexes.entrySet()) {
-//            SCI.put(entry.getKey(), entry.getValue().toVertice());
-//        }
-//        return SCI;
-//    }
-//
-//    private Integer getIndexByComponent(Componente comp) {
-//        for (Map.Entry<Integer, Componente> entry : this.componentIndexes.entrySet()) {
-//           if(entry.getValue().equals(comp)){
-//               return entry.getKey();
-//           }
-//        }
-//        return -1;
-//    }
-//
-//    private Integer getIndexByVertex(Vertice v) {
-//        for (Map.Entry<Integer, Vertice> entry : this.vertexIndexes.entrySet()) {
-//           if(entry.getValue().equals(v)){
-//               return entry.getKey();
-//           }
-//        }
-//        return -1;
-//    }
 }

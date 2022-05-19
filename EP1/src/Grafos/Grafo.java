@@ -10,4 +10,7 @@ public interface Grafo {
     List<Vertice> topologicalSort();
     List DFS();
     Grafo Kosaraju();
+    Map<Vertice, List<Vertice>> componentsToVertexMap();
+    Map<Componente, List<Componente>> componentsToMap();
+    Map<Vertice, List<Vertice>> vertexMap();
 }

@@ -10,7 +10,6 @@ public class GrafoLista implements Grafo{
     private Map<Vertice, List<Vertice>> adjVertices;
     private int time;
     private List<Vertice> vertexesOutOrder;
-    private String nextVertexLabel = "";
     private Map<Componente, List<Componente>> stronglyConnectedComponents;
 
     public GrafoLista() {}
@@ -18,26 +17,30 @@ public class GrafoLista implements Grafo{
         this.readAdjList(map);
     }
 
-    public Map<Vertice, List<Vertice>> getAdjVertices() {
-        return this.adjVertices;
-    }
-
     public void setVertexesOutOrder(List<Vertice> outOrderList) {
         this.vertexesOutOrder = outOrderList;
     }
 
-    public Map<Vertice, List<Vertice>> getSCAL() {
-        Map<Vertice, List<Vertice>> SCAL = new HashMap<>();
+    public Map<Vertice, List<Vertice>> componentsToVertexMap() {
+        Map<Vertice, List<Vertice>> componentMap = new HashMap<>();
 
         for (Map.Entry<Componente, List<Componente>> entry : stronglyConnectedComponents.entrySet()) {
             List<Vertice> list = new ArrayList<>();
             for (Componente comp : entry.getValue()) {
                list.add(comp.toVertice());
             }
-            SCAL.put(entry.getKey().toVertice(), list);
+            componentMap.put(entry.getKey().toVertice(), list);
         }
 
-        return SCAL;
+        return componentMap;
+    }
+
+    public Map<Componente, List<Componente>> componentsToMap() {
+        return this.stronglyConnectedComponents;
+    }
+
+    public Map<Vertice, List<Vertice>> vertexMap() {
+        return this.adjVertices;
     }
 
     public List<Vertice> topologicalSort() {
@@ -55,7 +58,7 @@ public class GrafoLista implements Grafo{
         transposed.setVertexesOutOrder(this.DFS());
         transposed.DFS();
 
-        Map<Vertice, List<Vertice>> adjListSCG = transposed.getSCAL();
+        Map<Vertice, List<Vertice>> adjListSCG = transposed.componentsToVertexMap();
 
         GrafoLista stronglyConnectedGraph = new GrafoLista();
         stronglyConnectedGraph.readAdjList(adjListSCG);

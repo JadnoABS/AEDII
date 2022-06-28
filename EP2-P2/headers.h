@@ -34,7 +34,7 @@ struct tree {
 };
 typedef struct tree bTree;
 
-bTree *createTree(char *fileName, bool mode);
+bTree *createTree(char *fileName, char *dataFileName, bool mode);
 bTreeNode *nodeInit(bTreeNode *node, bool isLeaf, bTree *tree);
 void insert(bTree *tree, recordNode *record);
 void delete (bTree *tree, int key);
@@ -43,7 +43,7 @@ void dispNode(bTreeNode *node);
 void writeFile(bTree *ptr_tree, bTreeNode *p, int pos);
 void readFile(bTree *ptr_tree, bTreeNode *p, int pos);
 
-void enterData(recordNode *record, int id_num, char titulo[],
+void enterData(recordNode *record, char key[], char titulo[],
                char nomeCompletoPrimeiroAutor[], int anoPublicacao);
 recordNode *getData(char *filepath, int len);
 recordNode *search(bTree *tree, int key);
@@ -53,8 +53,8 @@ bTreeNode *merge(bTree *tree, bTreeNode *node, int idx);
 void borrowFromNext(bTree *tree, bTreeNode *node, int idx);
 void borrowFromPrev(bTree *tree, bTreeNode *node, int idx);
 void fill(bTree *tree, bTreeNode *node, int idx);
-recordNode *getSucc(bTree *tree, bTreeNode *node, int idx);
-recordNode *getPred(bTree *tree, bTreeNode *node, int idx);
+int getSucc(bTree *tree, bTreeNode *node, int idx);
+int getPred(bTree *tree, bTreeNode *node, int idx);
 void removeFromNonLeaf(bTree *tree, bTreeNode *node, int idx);
 void removeFromLeaf(bTree *tree, bTreeNode *node, int idx);
 void removeNode(bTree *tree, bTreeNode *node, int k);

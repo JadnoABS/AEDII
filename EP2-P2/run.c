@@ -1,6 +1,54 @@
 #include "headers.h"
+#include <stdio.h>
 int main(int argc, char const *argv[]) {
 
+  bTree *tree = createTree("tree.dat", "data.dat", false);
+
+  bool execute = true;
+  while (execute) {
+
+    char command[100];
+    scanf("%s", command);
+    switch (command[0]) {
+    case 'I':;
+      char bookData[100];
+      scanf("%s", bookData);
+
+      recordNode *bookRecord = getData(bookData, 1);
+      insert(tree, bookRecord);
+      traverse(tree, 0);
+      break;
+    case 'R':;
+      int key;
+      scanf("%d", &key);
+
+      bTreeNode *treeNode = malloc(sizeof(bTreeNode));
+      readFile(tree, treeNode, tree->root);
+
+      removeNode(tree, treeNode, key);
+      traverse(tree, 0);
+      break;
+    case 'B':;
+      int k;
+      scanf("%d", &k);
+
+      recordNode *rec = search(tree, k);
+      if (rec) {
+        printf("%d %s %s %d\n", getIntKey(rec->codigoLivro), rec->titulo,
+               rec->nomeCompletoPrimeiroAutor, rec->anoPublicacao);
+      } else {
+        printf("O livro com o código %d não existe\n", k);
+      }
+      break;
+    case 'F':
+      fclose(tree->fp);
+      fclose(tree->datafp);
+      execute = false;
+      break;
+    }
+  }
+
+  /*
   if (argc == 1) {
     printf("Please enter one of the options below:\n");
     printf("Commands:\n");
@@ -57,4 +105,5 @@ int main(int argc, char const *argv[]) {
 
   free(records);
   free(tree);
+  */
 }

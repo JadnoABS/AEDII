@@ -43,7 +43,7 @@ void dispNode(bTreeNode *node);
 void writeFile(bTree *ptr_tree, bTreeNode *p, int pos);
 void readFile(bTree *ptr_tree, bTreeNode *p, int pos);
 
-void enterData(recordNode *record, char key[], char titulo[],
+void enterData(recordNode *record, int key, char titulo[],
                char nomeCompletoPrimeiroAutor[], int anoPublicacao);
 recordNode *getData(char *filepath, int len);
 recordNode *search(bTree *tree, int key);

@@ -1,6 +1,6 @@
 all: run clean
 run: run.o implementation.o 
-	gcc -w run.o implementation.o -o run
+	gcc -w run.o implementation.o -lm -o run
 
 run.o: run.c headers.h
 	gcc -g -w -c run.c -D t=$(t) 

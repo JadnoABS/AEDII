@@ -1,5 +1,7 @@
 #include "headers.h"
 #include <math.h>
+#include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 bTree *createTree(char *fileName, char *dataFileName, bool mode) {
@@ -72,30 +74,35 @@ void readFile(bTree *ptr_tree, bTreeNode *p, int pos) {
 }
 
 char intToChar(int i) { return (char)48 + i; }
-int charToInt(char c) { return c - 48; }
+int charToInt(char c) { return (int)(c - 48); }
 
 int charArrToInt(char cArr[], int size) {}
 
 int getIntKey(recordNode *rec) {
 
   int result = 0;
-  for (int i = 5; i > 0; i++) {
+  for (int i = 5; i > 0; i--) {
     int order = pow(10, 5 - i);
-    result += charToInt(rec->codigoLivro[i]) * order;
+    if (rec->codigoLivro[i] >= 48)
+      result += charToInt(rec->codigoLivro[i]) * order;
   }
 
   return result;
 }
 
-void enterData(recordNode *record, char key[5], char titulo[],
+void enterData(recordNode *record, int key, char titulo[],
                char nomeCompletoPrimeiroAutor[], int anoPublicacao) {
 
   record->codigoLivro[0] = ' ';
-  record->codigoLivro[1] = key[0];
-  record->codigoLivro[2] = key[1];
-  record->codigoLivro[3] = key[2];
-  record->codigoLivro[4] = key[3];
-  record->codigoLivro[5] = key[4];
+  record->codigoLivro[1] = intToChar(key / 10000);
+  key -= (key / 10000) * 10000;
+  record->codigoLivro[2] = intToChar(key / 1000);
+  key -= (key / 1000) * 1000;
+  record->codigoLivro[3] = intToChar(key / 100);
+  key -= (key / 100) * 100;
+  record->codigoLivro[4] = intToChar(key / 10);
+  key -= (key / 10) * 10;
+  record->codigoLivro[5] = intToChar(key);
 
   strcpy(record->titulo, titulo);
   strcpy(record->nomeCompletoPrimeiroAutor, nomeCompletoPrimeiroAutor);
@@ -110,16 +117,15 @@ recordNode *getData(char *string, int len) {
   char delim = ';';
   char line[256];
   int file_no = 0;
-  char codigoLivro[5];
+  int key;
   char titulo[30];
   char nomeCompletoPrimeiroAutor[30];
   int anoPublicacao;
 
-  while (file_no < len &&
-         sscanf(string, "%[^,],%[^,],%[^,],%d", codigoLivro, titulo,
-                nomeCompletoPrimeiroAutor, &anoPublicacao)) {
-    enterData(&recordArr[file_no], codigoLivro, titulo,
-              nomeCompletoPrimeiroAutor, anoPublicacao);
+  while (file_no < len && sscanf(string, "%d;%[^;];%[^;];%d", &key, titulo,
+                                 nomeCompletoPrimeiroAutor, &anoPublicacao)) {
+    enterData(&recordArr[file_no], key, titulo, nomeCompletoPrimeiroAutor,
+              anoPublicacao);
     file_no++;
   }
 
@@ -203,6 +209,7 @@ void insertNonFull(bTree *tree, bTreeNode *x, recordNode *record) {
 void insert(bTree *tree, recordNode *record) {
   if (tree->nextPos == 0) // empty tree, first element.
   {
+
     tree->root = tree->nextPos;
 
     bTreeNode *firstNode = malloc(sizeof(bTreeNode));

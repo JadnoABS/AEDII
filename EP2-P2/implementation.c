@@ -33,6 +33,7 @@ bTree *createTree(char *fileName, char *dataFileName, bool mode) {
 }
 
 bTreeNode *nodeInit(bTreeNode *node, bool isLeaf, bTree *tree) {
+  node->validation = ' ';
   node->isLeaf = isLeaf;
   node->noOfRecs = 0;
   node->pos = tree->nextPos;
@@ -49,7 +50,7 @@ void writeData(bTree *tree, recordNode *rec, int pos) {
     pos = tree->dataNextPos;
   }
 
-  fseek(tree->datafp, pos * sizeof(recordNode), 0);
+  fseek(tree->datafp, pos * sizeof(recordNode), SEEK_SET);
   fwrite(rec, sizeof(recordNode), 1, tree->datafp);
 }
 
@@ -59,7 +60,7 @@ void writeFile(bTree *ptr_tree, bTreeNode *p,
     pos = ptr_tree->nextPos++;
   }
 
-  fseek(ptr_tree->fp, pos * sizeof(bTreeNode), 0);
+  fseek(ptr_tree->fp, pos * sizeof(bTreeNode), SEEK_SET);
   fwrite(p, sizeof(bTreeNode), 1, ptr_tree->fp);
 }
 
@@ -185,6 +186,7 @@ void insertNonFull(bTree *tree, bTreeNode *x, recordNode *record) {
 
     writeData(tree, record, tree->dataNextPos);
     writeFile(tree, x, x->pos);
+    (tree->dataNextPos)++;
   } else {
     while ((i >= 0) && (getIntKey(record) < x->keyRecArr[i])) {
       i = i - 1;
@@ -221,6 +223,7 @@ void insert(bTree *tree, recordNode *record) {
     writeData(tree, record, tree->dataNextPos);
     writeFile(tree, firstNode, firstNode->pos);
 
+    (tree->dataNextPos)++;
     free(firstNode);
     return;
   } else {

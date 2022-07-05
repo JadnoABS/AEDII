@@ -12,6 +12,7 @@ struct rec {
 typedef struct rec recordNode;
 
 struct bTreeNode {
+  char validation;
   bool isLeaf;
   int pos;
   int noOfRecs;

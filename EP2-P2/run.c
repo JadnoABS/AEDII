@@ -1,5 +1,6 @@
 #include "headers.h"
 #include <stdio.h>
+#include <stdlib.h>
 int main(int argc, char const *argv[]) {
 
   bTree *tree = createTree("tree.dat", "data.dat", false);
@@ -9,6 +10,9 @@ int main(int argc, char const *argv[]) {
 
     char command[100];
     scanf("%s", command);
+
+    recordNode *rec = malloc(sizeof(recordNode));
+
     switch (command[0]) {
     case 'I':;
       char bookData[100];
@@ -32,7 +36,7 @@ int main(int argc, char const *argv[]) {
       int k;
       scanf("%d", &k);
 
-      recordNode *rec = search(tree, k);
+      rec = search(tree, k);
       if (rec) {
         printf("%d %s %s %d\n", getIntKey(rec->codigoLivro), rec->titulo,
                rec->nomeCompletoPrimeiroAutor, rec->anoPublicacao);
@@ -45,9 +49,59 @@ int main(int argc, char const *argv[]) {
       fclose(tree->datafp);
       execute = false;
       break;
+    case 'P':
+      switch (command[1]) {
+      case '1':
+        break;
+      case '2':;
+        bTreeNode *page = malloc(sizeof(bTreeNode));
+        int pos = 0;
+        while (pos < tree->nextPos) {
+          readFile(tree, page, pos);
+          printf("%c %s %d %d ", page->validation,
+                 page->isLeaf ? "true" : "false", page->pos, page->noOfRecs);
+          for (int i = 0; i < page->noOfRecs; i++) {
+            printf("%d ", page->keyRecArr[i]);
+          }
+          for (int i = 0; i < page->noOfRecs; i++) {
+            printf("%d ", page->posRecArr[i]);
+          }
+          for (int i = 0; i < 2 * t; i++) {
+            printf("%d ", page->children[i]);
+          }
+          printf("\n");
+          pos++;
+        }
+        free(page);
+
+        break;
+      case '3':;
+        pos = 0;
+        while (pos < tree->dataNextPos) {
+          readData(tree, rec, pos);
+          bool numberStarted = false;
+          for (int i = 0; i < 6; i++) {
+            if (rec->codigoLivro[i] == '0' && !numberStarted) {
+              continue;
+            }
+            printf("%c", rec->codigoLivro[i]);
+            if (i > 0)
+              numberStarted = true;
+          }
+          printf(" %s %s %d\n", rec->titulo, rec->nomeCompletoPrimeiroAutor,
+                 rec->anoPublicacao);
+          pos++;
+        }
+        break;
+      }
+      break;
     }
+
+    free(rec);
   }
 
+  free(tree);
+  return 0;
   /*
   if (argc == 1) {
     printf("Please enter one of the options below:\n");

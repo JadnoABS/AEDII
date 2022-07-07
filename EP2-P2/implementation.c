@@ -690,10 +690,14 @@ bTreeNode *merge(bTree *tree, bTreeNode *node, int idx) {
 
   // RESPOSTA: se a raiz foi mergeada, agora teremos uma raiz "fantasma"
   if (node->noOfRecs == 0) {
+    node->validation = '#';
+
     // Precisamos corrigir isso fazendo com que ela aponte para a raiz
     // verdadeira
     tree->root = node->children[0];
   }
+
+  sibling->validation = '#';
 
   // Freeing the memory occupied by sibling
   writeFile(tree, node, node->pos);

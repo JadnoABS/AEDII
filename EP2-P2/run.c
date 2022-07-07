@@ -51,11 +51,33 @@ int main(int argc, char const *argv[]) {
       break;
     case 'P':
       switch (command[1]) {
-      case '1':
-        break;
-      case '2':;
+      case '1':;
         bTreeNode *page = malloc(sizeof(bTreeNode));
         int pos = 0;
+        while (pos < tree->nextPos) {
+          readFile(tree, page, pos);
+          if (page->validation != '#') {
+            printf("%c %s %d %d ", page->validation,
+                   page->isLeaf ? "true" : "false", page->pos, page->noOfRecs);
+            for (int i = 0; i < page->noOfRecs; i++) {
+              printf("%d ", page->keyRecArr[i]);
+            }
+            for (int i = 0; i < page->noOfRecs; i++) {
+              printf("%d ", page->posRecArr[i]);
+            }
+            for (int i = 0; i < 2 * t; i++) {
+              printf("%d ", page->children[i]);
+            }
+            printf("\n");
+          }
+          pos++;
+        }
+        free(page);
+
+        break;
+      case '2':;
+        page = malloc(sizeof(bTreeNode));
+        pos = 0;
         while (pos < tree->nextPos) {
           readFile(tree, page, pos);
           printf("%c %s %d %d ", page->validation,

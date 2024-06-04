@@ -1,0 +1,45 @@
+8
+a: b;
+b: c; e; f;
+c: d; g;
+d: c; h;
+e: a; f;
+f: g;
+g: f; h;
+h: h;
+2
+
+9
+undershorts: pants; shoes;
+pants: belt; shoes;
+belt: jacket;
+shirt: belt; tie;
+tie: jacket;
+jacket:
+socks: shoes;
+shoes:
+watch:
+1
+
+4
+a: b; c;
+b: e;
+c: e;
+e: a;
+1
+
+13
+Alexandre: Rafael; Sueli;
+Mariana: Larissa; Sueli; Eduardo;
+Rafael: Alexandre;
+Sueli:
+Larissa: Vitoria; Alberto;
+Eduardo: Alberto; Joao; Henrique;
+Alberto: Sueli; Alexandre;
+Ines: Mariana; Roberto;
+Vitoria: Roberto;
+Joao:
+Henrique: Eduardo; Roberto;
+Guilherme:
+Roberto: Henrique; Eduardo;
+1

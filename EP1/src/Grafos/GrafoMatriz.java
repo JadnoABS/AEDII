@@ -281,17 +281,17 @@ public class GrafoMatriz implements Grafo{
     @Override
     public void printGraph() {
         // int columnSize = this.vertexIndexes.get(0).getLabel().length();
-        System.out.printf("    ");
+        System.out.printf("\t  ");
         for(Map.Entry<Integer, Vertice> entry : this.vertexIndexes.entrySet()) {
             System.out.printf("%s  ", entry.getValue().getLabel());
         }
         System.out.printf("\n");
 
         for(Map.Entry<Integer, Vertice> entry : this.vertexIndexes.entrySet()) {
-            System.out.printf("%s  ", entry.getValue().getLabel());
+            System.out.printf("%s\t", entry.getValue().getLabel());
             this.adjMatrix.get(entry.getKey()).forEach(v -> {
-                if(v) System.out.print("1  ");
-                else System.out.print("0  ");
+                if(v) System.out.printf("%4d", 1);
+                else System.out.printf("%4d", 0);
             });
             System.out.printf("\n");
         }

@@ -43,16 +43,6 @@ public class GrafoLista implements Grafo{
         return this.adjVertices;
     }
 
-    public List<Vertice> topologicalSort() {
-        List<Vertice> vertexOrder = DFS();
-        List<Vertice> vertexTopOrder = new ArrayList<>();
-        for (int i = vertexOrder.size()-1; i >= 0; i--) {
-            vertexTopOrder.add(vertexOrder.get(i));
-        }
-
-        return vertexTopOrder;
-    }
-
     public GrafoLista Kosaraju() {
         GrafoLista transposed = getTranspose();
         transposed.setVertexesOutOrder(this.DFS());
@@ -152,6 +142,16 @@ public class GrafoLista implements Grafo{
                 }
             }
         }
+    }
+
+    public List<Vertice> topologicalSort() {
+        List<Vertice> vertexOrder = DFS();
+        List<Vertice> vertexTopOrder = new ArrayList<>();
+        for (int i = vertexOrder.size()-1; i >= 0; i--) {
+            vertexTopOrder.add(vertexOrder.get(i));
+        }
+
+        return vertexTopOrder;
     }
 
     @Override

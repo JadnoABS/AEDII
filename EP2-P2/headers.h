@@ -4,7 +4,7 @@
 #include <string.h>
 
 struct rec {
-  char codigoLivro[6]; // chave
+  char codigoLivro[7]; // chave
   char titulo[30];
   char nomeCompletoPrimeiroAutor[30];
   int anoPublicacao;
@@ -38,9 +38,6 @@ typedef struct tree bTree;
 bTree *createTree(char *fileName, char *dataFileName, bool mode);
 bTreeNode *nodeInit(bTreeNode *node, bool isLeaf, bTree *tree);
 void insert(bTree *tree, recordNode *record);
-void delete (bTree *tree, int key);
-void traverse(bTree *tree, int root);
-void dispNode(bTreeNode *node);
 void writeFile(bTree *ptr_tree, bTreeNode *p, int pos);
 void readFile(bTree *ptr_tree, bTreeNode *p, int pos);
 

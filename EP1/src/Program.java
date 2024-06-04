@@ -1,3 +1,11 @@
+// EP 1
+// Disciplina: ACH2024
+// Turma: 2022103
+// Integrantes:
+//      Jadno Augusto Barbosa da Silva - NUSP: 12608618
+//      Gustavo Macedo Ribeiro - NUSP: 11366336
+
+
 import Grafos.*;
 import Ferramentas.*;
 
@@ -60,8 +68,10 @@ public class Program {
             stronglyConnectedGraph.printGraph();
         }
 
-        if(stronglyConnectedGraph != null && args[0].equals("covid")) {
-            realLifeProblem(stronglyConnectedGraph);
+        if(args.length > 0){
+            if(stronglyConnectedGraph != null && args[0].equals("covid")) {
+                realLifeProblem(stronglyConnectedGraph);
+            }
         }
 
     }

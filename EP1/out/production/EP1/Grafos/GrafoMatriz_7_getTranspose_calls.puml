@@ -1,0 +1,162 @@
+@startuml
+
+/' diagram meta data start
+config=CallConfiguration;
+{
+  "rootMethod": "Grafos.GrafoMatriz#getTranspose()",
+  "projectClassification": {
+    "searchMode": "OpenProject", // OpenProject, AllProjects
+    "includedProjects": "",
+    "pathEndKeywords": "*.impl",
+    "isClientPath": "",
+    "isClientName": "",
+    "isTestPath": "",
+    "isTestName": "",
+    "isMappingPath": "",
+    "isMappingName": "",
+    "isDataAccessPath": "",
+    "isDataAccessName": "",
+    "isDataStructurePath": "",
+    "isDataStructureName": "",
+    "isInterfaceStructuresPath": "",
+    "isInterfaceStructuresName": "",
+    "isEntryPointPath": "",
+    "isEntryPointName": "",
+    "treatFinalFieldsAsMandatory": false
+  },
+  "graphRestriction": {
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "removeByInheritance": "", // inheritance/annotation based filtering is done in a second step
+    "removeByAnnotation": "",
+    "removeByClassPackage": "", // cleanup the graph after inheritance/annotation based filtering is done
+    "removeByClassName": "",
+    "cutMappings": false,
+    "cutEnum": true,
+    "cutTests": true,
+    "cutClient": true,
+    "cutDataAccess": true,
+    "cutInterfaceStructures": true,
+    "cutDataStructures": true,
+    "cutGetterAndSetter": true,
+    "cutConstructors": true
+  },
+  "graphTraversal": {
+    "forwardDepth": 3,
+    "backwardDepth": 3,
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "hideMappings": false,
+    "hideDataStructures": false,
+    "hidePrivateMethods": true,
+    "hideInterfaceCalls": true, // indirection: implementation -> interface (is hidden) -> implementation
+    "onlyShowApplicationEntryPoints": false, // root node is included
+    "useMethodCallsForStructureDiagram": "ForwardOnly" // ForwardOnly, BothDirections, No
+  },
+  "details": {
+    "aggregation": "GroupByClass", // ByClass, GroupByClass, None
+    "showMethodParametersTypes": false,
+    "showMethodParametersNames": false,
+    "showMethodReturnType": false,
+    "showPackageLevels": 2,
+    "showCallOrder": false,
+    "edgeMode": "MethodsOnly", // TypesOnly, MethodsOnly, TypesAndMethods, MethodsAndDirectTypeUsage
+    "showDetailedClassStructure": false
+  },
+  "rootClass": "Grafos.GrafoMatriz",
+  "extensionCallbackMethod": "" // qualified.class.name#methodName - signature: public static String method(String)
+}
+diagram meta data end '/
+
+
+
+digraph g {
+    rankdir="LR"
+    splines=polyline
+    
+
+'nodes 
+subgraph cluster_1355265636 { 
+   	label=Program
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   subgraph cluster_648730842 { 
+   	label=Program
+	labeljust=l
+	fillcolor=white
+	style=filled
+   
+   Program1355265636XXXmain1859653459[
+	label="+ main()"
+	style=filled
+	fillcolor=white
+	tooltip="Program
+
+null"
+	fontcolor=darkgreen
+];
+} 
+} 
+
+subgraph cluster_2140942420 { 
+   	label=Grafos
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   subgraph cluster_1246503432 { 
+   	label=GrafoMatriz
+	labeljust=l
+	fillcolor=white
+	style=filled
+   
+   GrafoMatriz2140942420XXXKosaraju0[
+	label="+ Kosaraju()"
+	style=filled
+	fillcolor=white
+	tooltip="GrafoMatriz
+
+null"
+	fontcolor=darkgreen
+];
+
+GrafoMatriz2140942420XXXgetTranspose0[
+	label="+ getTranspose()"
+	style=filled
+	fillcolor=white
+	tooltip="GrafoMatriz
+
+null"
+	penwidth=4
+	fontcolor=darkgreen
+];
+
+GrafoMatriz2140942420XXXreadAdjList832186646[
+	label="+ readAdjList()"
+	style=filled
+	fillcolor=white
+	tooltip="GrafoMatriz
+
+null"
+	fontcolor=darkgreen
+];
+} 
+} 
+
+'edges    
+GrafoMatriz2140942420XXXKosaraju0 -> GrafoMatriz2140942420XXXgetTranspose0;
+GrafoMatriz2140942420XXXgetTranspose0 -> GrafoMatriz2140942420XXXreadAdjList832186646;
+Program1355265636XXXmain1859653459 -> GrafoMatriz2140942420XXXKosaraju0;
+    
+}
+@enduml

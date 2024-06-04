@@ -4,6 +4,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+/*
+ * CRIA UMA ARVORE B
+ *
+ * MUDANÇAS:
+ * A ARVORE B TEM 2 NOVOS CAMPOS ( dataFileName e datafp )
+ * PARA GUARDAREM RESPECTIVAMENTE NOME DO ARQUIVO DE REGISTROS E SEU PONTEIRO
+ *
+ */
 bTree *createTree(char *fileName, char *dataFileName, bool mode) {
   bTree *tree = malloc(sizeof(bTree));
 
@@ -32,6 +41,13 @@ bTree *createTree(char *fileName, char *dataFileName, bool mode) {
   return tree;
 }
 
+/*
+ * INICIALIZA UMA PAGINA DA ARVORE B
+ *
+ * MUDANÇAS:
+ * AS PAGINAS TEM AGORA UM CAMPO DE VALIDACAO
+ * ( RECEBE O CHARACTER '#' QUANDO NAO É MAIS VÁLIDA )
+ */
 bTreeNode *nodeInit(bTreeNode *node, bool isLeaf, bTree *tree) {
   node->validation = ' ';
   node->isLeaf = isLeaf;
@@ -45,6 +61,9 @@ bTreeNode *nodeInit(bTreeNode *node, bool isLeaf, bTree *tree) {
   return node;
 }
 
+/*
+ * SALVA O REGISTRO NO ARQUIVO tree->datafp
+ */
 void writeData(bTree *tree, recordNode *rec, int pos) {
   if (pos == -1) {
     pos = tree->dataNextPos;
@@ -54,6 +73,9 @@ void writeData(bTree *tree, recordNode *rec, int pos) {
   fwrite(rec, sizeof(recordNode), 1, tree->datafp);
 }
 
+/*
+ * SALVA A PÁGINA NO ARQUIVO tree->fp
+ */
 void writeFile(bTree *ptr_tree, bTreeNode *p,
                int pos) { // pos = -1; use nextPos {
   if (pos == -1) {
@@ -64,26 +86,34 @@ void writeFile(bTree *ptr_tree, bTreeNode *p,
   fwrite(p, sizeof(bTreeNode), 1, ptr_tree->fp);
 }
 
+/*
+ * LÊ O REGISTRO NO ARQUIVO tree->datafp
+ */
 void readData(bTree *tree, recordNode *rec, int pos) {
   fseek(tree->datafp, pos * sizeof(recordNode), SEEK_SET);
   fread(rec, sizeof(recordNode), 1, tree->datafp);
 }
 
+/*
+ * LÊ A PÁGINA NO ARQUIVO tree->fp
+ */
 void readFile(bTree *ptr_tree, bTreeNode *p, int pos) {
   fseek(ptr_tree->fp, pos * sizeof(bTreeNode), SEEK_SET);
   fread(p, sizeof(bTreeNode), 1, ptr_tree->fp);
 }
 
+// USADO PARA CONVERTER UM INTEIRO PARA CHARACTER
 char intToChar(int i) { return (char)48 + i; }
+
+// USADO PARA CONVERTER UM CHARACTER PARA INTEIRO
 int charToInt(char c) { return (int)(c - 48); }
 
-int charArrToInt(char cArr[], int size) {}
-
+// PEGA A CHAVE (QUE ESTÁ EM FORMATO DE char[]) E CONVERTE PARA UM INTEIRO
 int getIntKey(recordNode *rec) {
 
   int result = 0;
-  for (int i = 5; i > 0; i--) {
-    int order = pow(10, 5 - i);
+  for (int i = 6; i > 0; i--) {
+    int order = pow(10, 6 - i);
     if (rec->codigoLivro[i] >= 48)
       result += charToInt(rec->codigoLivro[i]) * order;
   }
@@ -91,19 +121,25 @@ int getIntKey(recordNode *rec) {
   return result;
 }
 
+/*
+ * PREENCHE OS CAMPOS DO record COM OS DADOS PASSADOS
+ * DETALHE: RECEBE A CHAVE COMO INTEIRO E CONVERTE PARA char[]
+ */
 void enterData(recordNode *record, int key, char titulo[],
                char nomeCompletoPrimeiroAutor[], int anoPublicacao) {
 
   record->codigoLivro[0] = ' ';
-  record->codigoLivro[1] = intToChar(key / 10000);
+  record->codigoLivro[1] = intToChar(key / 100000);
+  key -= (key / 100000) * 100000;
+  record->codigoLivro[2] = intToChar(key / 10000);
   key -= (key / 10000) * 10000;
-  record->codigoLivro[2] = intToChar(key / 1000);
+  record->codigoLivro[3] = intToChar(key / 1000);
   key -= (key / 1000) * 1000;
-  record->codigoLivro[3] = intToChar(key / 100);
+  record->codigoLivro[4] = intToChar(key / 100);
   key -= (key / 100) * 100;
-  record->codigoLivro[4] = intToChar(key / 10);
+  record->codigoLivro[5] = intToChar(key / 10);
   key -= (key / 10) * 10;
-  record->codigoLivro[5] = intToChar(key);
+  record->codigoLivro[6] = intToChar(key);
 
   strcpy(record->titulo, titulo);
   strcpy(record->nomeCompletoPrimeiroAutor, nomeCompletoPrimeiroAutor);
@@ -112,6 +148,10 @@ void enterData(recordNode *record, int key, char titulo[],
   return;
 }
 
+/*
+ * RECEBE UMA STRING COM OS DADOS DE INSERÇÃO,
+ * FORMATA ESSES DADOS E RETORNA UM recordNode PREENCHIDO COM OS MESMOS
+ */
 recordNode *getData(char *string, int len) {
 
   recordNode *recordArr = malloc(sizeof(recordNode) * len);
@@ -133,6 +173,12 @@ recordNode *getData(char *string, int len) {
   return recordArr;
 }
 
+/*
+ * FAZ A OPERAÇÃO DE SPLIT DA ÁRVORE B
+ * MUDANÇAS:
+ * bTreeNode->recordArr foi substituido por
+ * bTreeNode->keyRecArr e bTreeNode->posRecArr
+ */
 void splitChild(bTree *tree, bTreeNode *x, int i, bTreeNode *y) {
   bTreeNode *z = malloc(sizeof(bTreeNode));
   nodeInit(z, y->isLeaf, tree);
@@ -172,6 +218,13 @@ void splitChild(bTree *tree, bTreeNode *x, int i, bTreeNode *y) {
   free(z);
 }
 
+/*
+ * INSERE UM REGISTRO EM UMA PAGINA NAO CHEIA
+ * MUDANÇAS:
+ * bTreeNode->recordArr foi substituido por
+ * bTreeNode->keyRecArr e bTreeNode->posRecArr
+ * USO DA FUNCAO writeData
+ */
 void insertNonFull(bTree *tree, bTreeNode *x, recordNode *record) {
   int i = (x->noOfRecs) - 1;
   if (x->isLeaf == true) {
@@ -208,6 +261,13 @@ void insertNonFull(bTree *tree, bTreeNode *x, recordNode *record) {
   }
 }
 
+/*
+ * INSERE UM REGISTRO NA PAGINA PASSADA
+ * MUDANÇAS:
+ * bTreeNode->recordArr foi substituido por
+ * bTreeNode->keyRecArr e bTreeNode->posRecArr
+ * USO DA FUNCAO writeData
+ */
 void insert(bTree *tree, recordNode *record) {
   if (tree->nextPos == 0) // empty tree, first element.
   {
@@ -259,40 +319,13 @@ void insert(bTree *tree, recordNode *record) {
   }
 }
 
-void traverse(bTree *tree, int root) {
-
-  if (-1 == root) {
-    return;
-  }
-
-  bTreeNode *toPrint = malloc(sizeof(bTreeNode));
-  readFile(tree, toPrint, root);
-  dispNode(toPrint);
-
-  for (int i = 0; i < 2 * t; i++) {
-    traverse(tree, toPrint->children[i]);
-  }
-
-  free(toPrint);
-}
-
-void dispNode(bTreeNode *node) {
-  printf("Position in node:%d\n", node->pos);
-  printf("Number of Records:%d\n", node->noOfRecs);
-  printf("Is leaf?:%d\n", node->isLeaf);
-  printf("Keys:\n");
-  for (int i = 0; i < node->noOfRecs; i++) {
-    printf("%d ", node->keyRecArr[i]);
-  }
-  printf("\n");
-  printf("Links:\n");
-  for (int i = 0; i < 2 * t; ++i) {
-    printf("%d ", node->children[i]);
-  }
-  printf("\n");
-  printf("\n");
-}
-
+/*
+ * PROCURA RECURSIVAMENTE POR UM REGISTRO DE CHAVE == key
+ * MUDANÇAS:
+ * bTreeNode->recordArr->key foi substituido por
+ * bTreeNode->keyRecArr
+ * USO DA FUNCAO readData
+ */
 recordNode *searchRecursive(bTree *tree, int key, bTreeNode *root) {
   int i = 0;
 
@@ -317,6 +350,9 @@ recordNode *searchRecursive(bTree *tree, int key, bTreeNode *root) {
   }
 }
 
+/*
+ * PONTO DE CHAMADA DA FUNCAO RECURSIVA searchRecursive
+ */
 recordNode *search(bTree *tree, int key) {
 
   bTreeNode *root = malloc(sizeof(bTreeNode));
@@ -327,6 +363,9 @@ recordNode *search(bTree *tree, int key) {
   return result;
 }
 
+/*
+ * ENCONTRA O INDICE DE UM REGISTRO EM UMA PAGINA A PARTIR DA SUA CHAVE
+ */
 int findKey(bTreeNode *node, int k) {
   int idx = 0;
   while (idx < node->noOfRecs && node->keyRecArr[idx] < k)
@@ -334,7 +373,14 @@ int findKey(bTreeNode *node, int k) {
   return idx;
 }
 
-// A function to remove the idx-th key from this node - which is a leaf node
+/*
+ * REMOVE UM REGISTRO DE UMA PÁGINA FOLHA
+ * MUDANÇAS:
+ * bTreeNode->recordArr foi substituido por
+ * bTreeNode->keyRecArr e bTreeNode->posRecArr
+ * ADICIONA O char '#' NO INICIO DE CADA REGISTRO
+ * USO DA FUNCAO writeData
+ */
 void removeFromLeaf(bTree *tree, bTreeNode *node, int idx) {
   // Mark as deleted on data.dat file
   recordNode *rec = malloc(sizeof(recordNode));
@@ -352,7 +398,14 @@ void removeFromLeaf(bTree *tree, bTreeNode *node, int idx) {
   node->noOfRecs--;
 }
 
-// A function to remove the idx-th key from this node - which is a non-leaf node
+/*
+ * REMOVE UM REGISTRO DE UMA PÁGINA QUE NÃO É FOLHA
+ * MUDANÇAS:
+ * bTreeNode->recordArr foi substituido por
+ * bTreeNode->keyRecArr e bTreeNode->posRecArr
+ * ADICIONA O char '#' NO INICIO DE CADA REGISTRO
+ * USO DA FUNCAO readData
+ */
 void removeFromNonLeaf(bTree *tree, bTreeNode *node, int idx) {
 
   int k = node->keyRecArr[idx];
@@ -415,6 +468,12 @@ void removeFromNonLeaf(bTree *tree, bTreeNode *node, int idx) {
   free(sibling);
 }
 
+/*
+ * REMOVE UM REGISTRO DA ÁRVORE B
+ * MUDANÇAS:
+ * bTreeNode->recordArr->key foi substituido por
+ * bTreeNode->keyRecArr
+ */
 void removeNode(bTree *tree, bTreeNode *node, int k) {
 
   int idx = findKey(node, k);
@@ -720,29 +779,4 @@ bool removeFromTree(bTree *tree, int key) {
 
   free(root);
   return found;
-}
-
-void hardPrint(bTree *tree) {
-  bTreeNode *lido = (bTreeNode *)malloc(sizeof(bTreeNode));
-  for (int i = 0; i < tree->nextPos; i++) {
-    fseek(tree->fp, i * sizeof(bTreeNode), SEEK_SET);
-    fread(lido, sizeof(bTreeNode), 1, tree->fp);
-
-    if (lido->isLeaf <= 1)
-      dispNode(lido);
-    else
-      printf("ERRO: isLeaf = %i\n\n", lido->isLeaf);
-  }
-
-  free(lido);
-}
-
-void doublePrint(bTree *tree) {
-  printf("=================");
-  printf("\nTraverse\n");
-  traverse(tree, tree->root);
-
-  printf("=================");
-  printf("\nHard print\n");
-  hardPrint(tree);
 }

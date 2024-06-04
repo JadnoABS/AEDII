@@ -1,3 +1,9 @@
+// EXERCICIO PROGRAMA 2 - PARTE 2
+// DISCIPLINA: AEDII - ACH2024
+// INTEGRANTES:
+//    GUSTAVO ALMEIDA
+//    JADNO BARBOSA
+
 #include "headers.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,14 +20,16 @@ int main(int argc, char const *argv[]) {
     recordNode *rec = malloc(sizeof(recordNode));
 
     switch (command[0]) {
+    // INSERIR LIVRO
     case 'I':;
       char bookData[100];
-      scanf("%s", bookData);
+      fgets(bookData, sizeof(char) * 100, stdin);
 
       recordNode *bookRecord = getData(bookData, 1);
       insert(tree, bookRecord);
-      traverse(tree, 0);
       break;
+
+    // REMOVER LIVRO
     case 'R':;
       int key;
       scanf("%d", &key);
@@ -30,8 +38,9 @@ int main(int argc, char const *argv[]) {
       readFile(tree, treeNode, tree->root);
 
       removeNode(tree, treeNode, key);
-      traverse(tree, 0);
       break;
+
+    // BUSCAR LIVRO
     case 'B':;
       int k;
       scanf("%d", &k);
@@ -44,13 +53,18 @@ int main(int argc, char const *argv[]) {
         printf("O livro com o código %d não existe\n", k);
       }
       break;
+
+    // FECHAR O PROGRAMA
     case 'F':
       fclose(tree->fp);
       fclose(tree->datafp);
       execute = false;
       break;
+
     case 'P':
       switch (command[1]) {
+
+      // LISTAR PAGINAS DO INDICE
       case '1':;
         bTreeNode *page = malloc(sizeof(bTreeNode));
         int pos = 0;
@@ -75,6 +89,8 @@ int main(int argc, char const *argv[]) {
         free(page);
 
         break;
+
+      // LISTAR PAGINAS DO INDICE INCLUINDO AS QUE FORAM ELIMINADAS
       case '2':;
         page = malloc(sizeof(bTreeNode));
         pos = 0;
@@ -97,12 +113,14 @@ int main(int argc, char const *argv[]) {
         free(page);
 
         break;
+
+      // LISTAR REGISTROS INCLUINDO OS ELIMINADOS
       case '3':;
         pos = 0;
         while (pos < tree->dataNextPos) {
           readData(tree, rec, pos);
           bool numberStarted = false;
-          for (int i = 0; i < 6; i++) {
+          for (int i = 0; i < 7; i++) {
             if (rec->codigoLivro[i] == '0' && !numberStarted) {
               continue;
             }
@@ -124,62 +142,4 @@ int main(int argc, char const *argv[]) {
 
   free(tree);
   return 0;
-  /*
-  if (argc == 1) {
-    printf("Please enter one of the options below:\n");
-    printf("Commands:\n");
-    printf("./run [OPTIONS]\n");
-    printf("-b [KEY] -->for building a tree.\n");
-    printf("-s [KEY] -->for searching a [KEY].\n");
-    printf("-d [KEY] -->for deleting a [KEY].\n");
-    printf("Exiting now\n");
-    exit(0);
-  }
-
-  int len, i;
-  printf("How many records do you want to build from dataset?");
-  scanf("%d", &len);
-
-  recordNode *records = getData("data/dataset.csv", len);
-  bTree *tree = createTree("tree.dat", false);
-
-  for (i = 0; i < len; i++) {
-    insert(tree, &records[i]);
-  }
-
-  if (!strcmp(argv[1], "-d")) {
-    int key;
-    sscanf(argv[2], "%d", &key);
-    bool res = removeFromTree(tree, key);
-    if (res) {
-      printf("Successfull Deletion.\n");
-    } else {
-      printf("Deletion not successful.\n");
-    }
-  }
-
-  traverse(tree, tree->root);
-
-  if (!strcmp(argv[1], "-s")) {
-    // printf("Time Taken to build tree: %f seconds\n",timeToBuild);
-    int key;
-    sscanf(argv[2], "%d", &key);
-    recordNode *res = search(tree, key);
-
-    if (res != NULL) {
-      printf("key\tcountry\tgrate\tscore\trate\n");
-      printf("%d\t", res->key);
-      printf("%s\t", res->country);
-      printf("%s\t", res->grate);
-      printf("%d\t", res->score);
-      printf("%d\n", res->rate);
-
-      free(res);
-    } else
-      printf("Record not found!");
-  }
-
-  free(records);
-  free(tree);
-  */
 }
